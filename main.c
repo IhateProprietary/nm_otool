@@ -14,10 +14,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <string.h>
-#define __NSECT 16
 
 /*
-**
+** all the structure needed
 */
 
 typedef struct stat stat_t;
@@ -28,9 +27,12 @@ typedef struct load_command load_cmd_t;
 typedef struct symtab_command st_cmd_t;
 typedef struct nlist_64 nlst64_t;
 
+// -- for sorting
 typedef struct {
 	char *name;
 	nlst64_t *info;
+	uint8_t *vm_addr;
+	char	sym;
 } sym_t;
 
 int		main(int ac, char **av, char **ev)
@@ -40,10 +42,7 @@ int		main(int ac, char **av, char **ev)
 	seg_command_t	*segment;
 	stat_t 	_stat;
 	int		fd;
-	ssize_t	r;
 	void	*map;
-	void	*data1;
-	void	*data2;
 
 	if (ac == 1)
 		return (1);
@@ -60,8 +59,8 @@ int		main(int ac, char **av, char **ev)
 	{
 		segment = offset + map;
 		cmdsize = segment->cmdsize;
-		printf("%lx\ncmdsize == %lx type == %lx flag %lx\n",
-			   offset, segment->cmdsize, segment->cmd, segment->flags);
+		printf("%lx\ncmdsize == %lx type == %lx flag %lx vmaddr %lx\n",
+			   offset, segment->cmdsize, segment->cmd, segment->flags, segment->vmaddr);
 		if (segment->cmd == LC_SEGMENT_64)
 		{
 			printf("cmd->segname == %s\n", segment->segname);
@@ -69,7 +68,7 @@ int		main(int ac, char **av, char **ev)
 			size_t	nsect = segment->nsects;
 			for (uint32_t i = 0; i < nsect; i++, sect++)
 			{
-				printf("sectname == %s, %lx, %lx\n", sect->sectname, sect->addr, sect->flags);
+				printf("sectname == %s, %lx, %lx, %lx\n", sect->sectname, sect->addr, sect->flags, sect->offset);
 			}
 		}
 		else if (segment->cmd == LC_SYMTAB)
@@ -83,17 +82,17 @@ int		main(int ac, char **av, char **ev)
 			nlst64_t *sym = map + offset;
 			for (uint32_t i = 0; i < nsyms; i++, sym++)
 			{
-				printf("strx %-30s n_type %x n_sect %x n_desc %x n_value %x EXT == %d\n",
-					   stroff + sym->n_un.n_strx,
-					   sym->n_type,
-					   sym->n_sect,
-					   sym->n_desc,
-					   sym->n_value,
-					   sym->n_type & N_EXT);
+				if (!(sym->n_type & N_STAB))
+					printf("strx %-30s n_type %x n_sect %x n_desc %x n_value %x EXT == %d\n",
+						   stroff + sym->n_un.n_strx,
+						   sym->n_type,
+						   sym->n_sect,
+						   sym->n_desc,
+						   sym->n_value,
+						   sym->n_type & N_EXT);
 			}
 		}
 		offset += cmdsize;
 		printf("__________\n");
 	}
-	printf("section %lu seg_cmd %lu\n", sizeof(*segment), sizeof(struct section_64));
 }

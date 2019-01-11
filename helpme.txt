@@ -29,3 +29,14 @@ n_value == offset in file
 -- OTOOL
 for otool -t
 just dump segment_header with __TEXT
+
+-- ARCHIVE
+MAGIC == !<arch>\n
+BEGINS with #1/ whatever's next
+ENDS with `\n
+
+NEXT PART BEGINS WITH __.SYMDEF / always 16 byte
+First set ranlib->ran_strx == 0 | ranlib->ran_off == sizeof(ranlib) struct
+----
+----
+SECOND SET ranlib->ran_strx == sizeof(char *) jumps to next archive;

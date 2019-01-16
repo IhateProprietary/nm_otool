@@ -46,8 +46,10 @@ typedef struct ar_hdr				ar_hdr_t;
 typedef struct mach_file			mhfile_t;
 typedef struct mach_sub				msub_t;
 typedef struct mach_syms			msyms_t;
-
-
+#ifdef OTOOL
+typedef struct mach_text			mtext_t;
+#endif
+#ifdef NM
 typedef struct
 {
 	char		*idx;
@@ -55,10 +57,12 @@ typedef struct
 	uint32_t	n_type;
 	uint32_t	n_sect;
 }	sym_t;
+#endif
 
 struct	mach_file
 {
 	char	*name;
+	char	*objname;
 	void	*map;
 	size_t	mapsize;
 	size_t	truesize;
@@ -69,24 +73,35 @@ struct	mach_file
 
 struct	mach_syms
 {
-	char	*obj;
 	void	*stroff;
 	size_t	sectsize;
 	void	*sect;
 	size_t	nsects;
+#ifdef NM
 	sym_t	**syms;
 	size_t	nsyms;
+#endif
 	size_t	size;
 };
-
-void	ft_qsort(void **stack, ssize_t size, int (*cmp)());
-
+#ifdef OTOOL
+struct	mach_text
+{
+	void		*ptr;
+	char		*sectname;
+	char		*segname;
+	size_t		size;
+	uint64_t	addr;
+};
+#endif
+#ifdef NM
+void		ft_qsort(void **stack, ssize_t size, int (*cmp)());
 
 void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base);
 void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base);
+void		printsym(sym_t *sym, sect64_t *sect);
+#endif
 void		addsection(msyms_t *file, seg_cmd_t *seg);
 void		addsection64(msyms_t *file, seg_cmd64_t *seg);
-void		printsym(sym_t *sym, sect64_t *sect);
 void		init_machfile32(msyms_t *file, mach_hdr_t *hdr);
 void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr);
 #endif

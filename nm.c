@@ -109,7 +109,7 @@ int		init_machfile(int fd, mhfile_t *file)
 	if ((map = mmap(0, stat_.st_size, PROT_READ, MAP_FLAGS, fd, 0))
 		== MAP_FAILED)
 		return (1);
-	ft_memset(file + sizeof(char *), 0, sizeof(*file) - sizeof(char *));
+	ft_memset(file, 0, sizeof(*file));
 	file->mapsize = stat_.st_size;
 	file->top = map + stat_.st_size;
 	file->map = map;
@@ -122,6 +122,7 @@ int		init_machfile(int fd, mhfile_t *file)
 	return (0);
 }
 
+#ifdef NM
 void	dumpsym(msyms_t *file)
 {
 	size_t	nsyms;
@@ -131,6 +132,8 @@ void	dumpsym(msyms_t *file)
 	void	*psect;
 
 	nsyms = file->nsyms;
+	if (!nsyms)
+		return ;
 	i = 0;
 	nsects = file->nsects;
 	psect = file->sect;
@@ -142,29 +145,118 @@ void	dumpsym(msyms_t *file)
 				file->sect + ((sym->n_sect - 1) * file->sectsize) : 0);
 	}
 }
+#endif
 
-void	dumpbin(void *base, char *arg, char *objname, size_t size)
+#ifdef OTOOL
+#define HEXASCII "0123456789abcdef"
+void	xtoa_b(char *dst, uint8_t *src, int n)
+{
+	int		i;
+	uint8_t	b;
+
+	i = 0;
+	while (i < n)
+	{
+		b = src[i++];
+		dst[2] = 0x20;
+		dst[1] = HEXASCII[b & 0xf];
+		b /= 0x10;
+		dst[0] = HEXASCII[b & 0xf];
+		dst += 3;
+	}
+	*dst = 0;
+}
+
+void	init_textforsection(msyms_t *file, void *base, char *sectname, mtext_t *t)
+{
+	size_t	nsects;
+	sect_t	*sect;
+
+	nsects = file->nsects;
+	sect = file->sect;
+	while (nsects--)
+	{
+		if (ft_strcmp(sectname, sect->sectname) == 0)
+		{
+			t->sectname = sect->sectname;
+			t->segname = sect->segname;
+			t->size = sect->size;
+			t->addr = sect->addr;
+			t->ptr = (char *)base + sect->offset;
+			break ;
+		}
+		sect++;
+	}
+}
+
+void	init_textforsection64(msyms_t *file, void *base, char *sectname, mtext_t *t)
+{
+	size_t		nsects;
+	sect64_t	*sect;
+
+	nsects = file->nsects;
+	sect = file->sect;
+	while (nsects--)
+	{
+		if (ft_strcmp(sectname, sect->sectname) == 0)
+		{
+			t->sectname = sect->sectname;
+			t->segname = sect->segname;
+			t->size = sect->size;
+			t->addr = sect->addr;
+			t->ptr = (char *)base + sect->offset;
+			break ;
+		}
+		sect++;
+	}
+}
+
+void	dumptext(msyms_t *file, void *base, int is32)
+{
+	mtext_t	text;
+	size_t	i;
+	char	b[50];
+
+	ft_memset(&text, 0, sizeof(text));
+	if (is32)
+		init_textforsection(file, base, "__text", &text);
+	else
+		init_textforsection64(file, base, "__text", &text);
+	ft_printf("Contents of (%s,%s) section\n", text.segname, text.sectname);
+	i = 0;
+	while (i < text.size)
+	{
+		xtoa_b(b, (uint8_t *)text.ptr + i,
+			(text.size - i) < 0x10 ? text.size - i : 0x10);
+		ft_printf("%-16.16llx\t%s\n", text.addr + i, b);
+		i += 16;
+	}
+}
+#endif
+
+void	dumpbin(mhfile_t *mach, size_t size)
 {
 	msyms_t		file;
 	mach_hdr_t	*hdr;
 
 	ft_memset(&file, 0, sizeof(file));
 	file.size = size;
-	file.obj = objname;
-	hdr = base;
+	hdr = mach->base;
 	if (hdr->magic == MH_MAGIC_64)
 		init_machfile64(&file, (mach_hdr64_t *)hdr);
 	else if (hdr->magic == MH_MAGIC)
 		init_machfile32(&file, hdr);
-	if (arg)
-	{
-		if (objname)
-			ft_printf("\n%s(%s):\n", arg, objname);
-		else
-			ft_printf("%s:\n", arg);
-	}
+	if (mach->name && mach->objname)
+		ft_printf("\n%s(%s):\n", mach->name, mach->objname);
+	else if (mach->name)
+		ft_printf("%s:\n", mach->name);
+#ifdef NM
 	dumpsym(&file);
 	free(file.syms);
+#endif
+#ifdef OTOOL
+	dumptext(&file, mach->base, hdr->magic == MH_MAGIC);
+#endif
 	free(file.sect);
 }
 
@@ -176,6 +268,9 @@ void	dumparch(mhfile_t *file)
 	uint32_t	size;
 
 	hdr = file->base;
+#ifdef OTOOL
+	ft_printf("Archive : %s", file->name);
+#endif
 	while ((void *)hdr < file->top)
 	{
 		if ((ft_memcmp(hdr->ar_name, AR_EFMT1, 3) != 0 &&
@@ -185,8 +280,9 @@ void	dumparch(mhfile_t *file)
 		off = ft_atoi(hdr->ar_name + 3);
 		if (size > file->truesize || off > size || off & 3 || size & 3)
 			break ;
-		dumpbin((void *)((char *)(hdr + 1) + off), file->name,
-			(char *)(hdr + 1), size);
+		file->objname = (char *)(hdr + 1);
+		file->base = (void *)((char *)(hdr + 1) + off);
+		dumpbin(file, size);
 		hdr = (ar_hdr_t *)((char *)(hdr + 1) + size);
 	}
 }
@@ -196,7 +292,7 @@ void	dump(mhfile_t *file)
 	if (file->type == MF_ARCHIVE)
 		dumparch(file);
 	else if (file->type == MF_BINARY)
-		dumpbin(file->base, file->name, (char *)0, file->truesize);
+		dumpbin(file, file->truesize);
 }
 
 int		main(int ac, char **av)
@@ -218,6 +314,8 @@ int		main(int ac, char **av)
 				dump(&file);
 				munmap(file.map, file.mapsize);
 			}
+			else
+				ft_dprintf(2, "%s fail\n", av[i]);
 			close(fd);
 		}
 		i++;
@@ -250,8 +348,10 @@ void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		if (ld->cmd == LC_SEGMENT_64)
 			addsection64(file, ((seg_cmd64_t *)ld));
+#ifdef NM
 		else if (ld->cmd == LC_SYMTAB)
 			addsymbole64(file, (st_cmd_t *)ld, (void *)hdr);
+#endif
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
 			;
@@ -274,14 +374,17 @@ void		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		if (ld->cmd == LC_SEGMENT)
 			addsection(file, ((seg_cmd_t *)ld));
+#ifdef NM
 		else if (ld->cmd == LC_SYMTAB)
 			addsymbole(file, (st_cmd_t *)ld, (void *)hdr);
+#endif
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
 			;
 	}
 }
 
+#ifdef NM
 void		printsym(sym_t *sym, sect64_t *sect)
 {
 	uint8_t		ntype;
@@ -306,6 +409,7 @@ void		printsym(sym_t *sym, sect64_t *sect)
 	else if ((ntype & N_TYPE) == N_UNDF && ntype & N_EXT && sym->n_value != 0)
 		ft_printf("%16s %c %s\n", "", 'C', name);
 }
+#endif
 
 void		addsection64(msyms_t *file, seg_cmd64_t *seg)
 {
@@ -350,7 +454,7 @@ void		addsection(msyms_t *file, seg_cmd_t *seg)
 	file->nsects += seg->nsects;
 	file->sect = mem;
 }
-
+#ifdef NM
 static int	cmp_ascii(void *sym1, void *sym2)
 {
 	int		ret;
@@ -418,3 +522,4 @@ void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base)
 	}
 	ft_qsort((void **)file->syms, file->nsyms, cmp_ascii);
 }
+#endif

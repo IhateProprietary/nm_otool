@@ -15,14 +15,6 @@
 # define CPUARCH64 CPU_TYPE_X86_64
 # define CPUARCH32 CPU_TYPE_X86
 
-# if !defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
-#  if __BYTE_ORDER__ == __LITTLE_ENDIAN_ORDER__
-#   define __LITTLE_ENDIAN__ 1
-#  else
-#   define __BIG_ENDIAN__ 1
-#  endif
-# endif
-
 # define MF_TYPEMASK	0xf0
 # define MF_NONE		0x00
 # define MF_ARCHIVE 	0x10

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_machfile.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:46:21 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:46:40 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdint.h>
 #include <mach-o/loader.h>
 #include <sys/stat.h>
@@ -8,7 +20,7 @@
 
 #ifdef NM
 
-void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
+void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -32,7 +44,7 @@ void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 	}
 }
 
-void		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
+void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -58,7 +70,7 @@ void		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 
 #else
 
-void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
+void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -80,7 +92,7 @@ void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 	}
 }
 
-void		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
+void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;

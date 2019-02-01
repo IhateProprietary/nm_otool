@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dumpbin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:48:07 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <mach-o/loader.h>
 #include <stdlib.h>
 #include "nm.h"
@@ -35,7 +47,6 @@ void	dumpbin(mhfile_t *mach, size_t size)
 	mach_hdr_t	*hdr;
 
 	ft_memset(&file, 0, sizeof(file));
-	printf("%d %d\n", file.nsects, sizeof(file));
 	file.size = size;
 	hdr = mach->base;
 	if (hdr->magic == MH_MAGIC_64)
@@ -83,7 +94,6 @@ void	dumpbin(mhfile_t *mach, size_t size)
 	mach_hdr_t	*hdr;
 
 	ft_memset(&file, 0, sizeof(file));
-	printf("%d %d\n", file.nsects, sizeof(file));
 	file.size = size;
 	hdr = mach->base;
 	if (hdr->magic == MH_MAGIC_64)

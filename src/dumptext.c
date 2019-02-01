@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dumptext.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:48:43 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:49:11 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifdef OTOOL
 # include <stdint.h>
 # include "nm.h"
@@ -23,7 +35,8 @@ void	xtoa_b(char *dst, uint8_t *src, int n)
 	*dst = 0;
 }
 
-void	init_textforsection(msyms_t *file, void *base, char *sectname, mtext_t *t)
+void	init_textforsection(msyms_t *file, void *base,
+					char *sectname, mtext_t *t)
 {
 	size_t	nsects;
 	sect_t	*sect;
@@ -45,7 +58,8 @@ void	init_textforsection(msyms_t *file, void *base, char *sectname, mtext_t *t)
 	}
 }
 
-void	init_textforsection64(msyms_t *file, void *base, char *sectname, mtext_t *t)
+void	init_textforsection64(msyms_t *file, void *base,
+						char *sectname, mtext_t *t)
 {
 	size_t		nsects;
 	sect64_t	*sect;

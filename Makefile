@@ -6,12 +6,12 @@
 #    By: jye <marvin@42.fr>                         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/01 17:45:46 by jye               #+#    #+#              #
-#    Updated: 2019/02/01 20:29:12 by jye              ###   ########.fr        #
+#    Updated: 2019/02/01 21:43:03 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 CC = gcc
-CFLAGS = -Wall -Wextra # -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 SRCS = addsection addsymbole dumpbin dumptext ft_qsort init_machfile \
 	   init_machheader nm printsym
@@ -59,10 +59,10 @@ re: fclean all
 
 $(OFOLDER)/%.ot.o : $(CFOLDER)/%.c
 	@mkdir -p $(OFOLDER)
-	$(CC) $(CFLAGS) -DOTOOL -g3 -Ilibft -Ift_printf/includes -c $^ -o $@
+	$(CC) $(CFLAGS) -DOTOOL -Ilibft -Ift_printf/includes -c $^ -o $@
 
 $(OFOLDER)/%.nm.o : $(CFOLDER)/%.c
 	@mkdir -p $(OFOLDER)
-	$(CC) $(CFLAGS) -DNM -g3 -Ilibft -Ift_printf/includes -c $^ -o $@
+	$(CC) $(CFLAGS) -DNM -Ilibft -Ift_printf/includes -c $^ -o $@
 
 #.PHONY: are

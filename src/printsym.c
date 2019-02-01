@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   printsym.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:45:41 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:45:56 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifdef NM
 # include <stdint.h>
 # include <mach-o/nlist.h>
@@ -5,7 +17,7 @@
 # include "ft_printf.h"
 # include "libft.h"
 
-void		printsym(sym_t *sym, sect64_t *sect)
+void	printsym(sym_t *sym, sect64_t *sect)
 {
 	uint8_t		ntype;
 	char		*name;
@@ -13,6 +25,8 @@ void		printsym(sym_t *sym, sect64_t *sect)
 
 	name = sym->idx;
 	ntype = sym->n_type;
+	if (name[0] == 0)
+		return ;
 	if ((ntype & N_TYPE) == N_UNDF)
 		ft_printf("%16s %c %s\n", "", 'U', name);
 	else if ((ntype & N_TYPE) == N_ABS)

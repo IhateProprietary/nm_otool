@@ -1,31 +1,17 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <sys/stat.h>
-#include <mach-o/loader.h>
-#include <mach-o/nlist.h>
-#include <mach-o/fat.h>
-#include <mach-o/ranlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   nm.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:45:07 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:45:23 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "nm.h"
-#ifndef FT_PRINTF_H
-# include <stdio.h>
-# define ft_dprintf dprintf
-# define ft_printf printf
-#endif
-#ifndef LIBFT_H
-# include <string.h>
-# define ft_memcmp memcmp
-# define ft_memcpy memcpy
-# define ft_memset memset
-# define ft_strcmp strcmp
-# define ft_strchr strchr
-# include <stdlib.h>
-# define ft_atoi atoi
-#endif
+#include "ft_printf.h"
 
 int		main(int ac, char **av)
 {

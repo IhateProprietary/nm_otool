@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_machheader.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/02/01 21:47:00 by jye               #+#    #+#             */
+/*   Updated: 2019/02/01 21:47:48 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdint.h>
 #include <ar.h>
 #include <mach-o/loader.h>
@@ -6,7 +18,7 @@
 #include "nm.h"
 #include "libft.h"
 
-void		init_machfromfat(mhfile_t *file, int swap)
+void	init_machfromfat(mhfile_t *file, int swap)
 {
 	uint32_t	nfat;
 	uint32_t	value;
@@ -34,7 +46,7 @@ void		init_machfromfat(mhfile_t *file, int swap)
 	}
 }
 
-void		init_machfromarch(mhfile_t *file)
+void	init_machfromarch(mhfile_t *file)
 {
 	ar_hdr_t	*hdr;
 	uint32_t	off;
@@ -55,14 +67,15 @@ void		init_machfromarch(mhfile_t *file)
 	objsize = *((uint32_t *)((char *)(hdr + 1) + off));
 	if (objsize > size)
 		return ;
-	strsize = *((uint32_t *)((char *)(hdr + 1) + off + objsize + sizeof(uint32_t)));
+	strsize = *((uint32_t *)((char *)(hdr + 1)
+						+ off + objsize + sizeof(uint32_t)));
 	if ((strsize + objsize) > size)
 		return ;
 	file->base = ((void *)(hdr + 1) + size);
 	file->type = MF_ARCHIVE;
 }
 
-int			init_machheader(mhfile_t *file)
+int		init_machheader(mhfile_t *file)
 {
 	uint32_t	magic;
 

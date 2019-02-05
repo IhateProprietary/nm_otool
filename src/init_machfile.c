@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:46:21 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:46:40 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 16:40:54 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 #ifdef NM
 
-void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
+int		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -28,23 +28,26 @@ void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 	uint32_t	sizeofcmds;
 
 	sizeofcmds = hdr->sizeofcmds;
+	if (sizeofcmds > file->size)
+		return (1);
 	offset = sizeof(mach_hdr64_t);
 	file->sectsize = sizeof(sect64_t);
 	ncmds = hdr->ncmds;
 	while (ncmds--)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
+		offset += ld->cmdsize;
+		if (offset > sizeofcmds)
+			return (1);
 		if (ld->cmd == LC_SEGMENT_64)
 			addsection64(file, ((seg_cmd64_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
 			addsymbole64(file, (st_cmd_t *)ld, (void *)hdr);
-		offset += ld->cmdsize;
-		if (offset > sizeofcmds)
-			return ;
 	}
+	return (0);
 }
 
-void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
+int		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -52,25 +55,28 @@ void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 	uint32_t	sizeofcmds;
 
 	sizeofcmds = hdr->sizeofcmds;
+	if (sizeofcmds > file->size)
+		return (1);
 	offset = sizeof(mach_hdr_t);
 	file->sectsize = sizeof(sect_t);
 	ncmds = hdr->ncmds;
 	while (ncmds--)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
+		offset += ld->cmdsize;
+		if (offset > sizeofcmds)
+			return (1);
 		if (ld->cmd == LC_SEGMENT)
 			addsection(file, ((seg_cmd_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
 			addsymbole(file, (st_cmd_t *)ld, (void *)hdr);
-		offset += ld->cmdsize;
-		if (offset > sizeofcmds)
-			return ;
 	}
+	return (0);
 }
 
 #else
 
-void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
+int		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -78,21 +84,24 @@ void	init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 	uint32_t	sizeofcmds;
 
 	sizeofcmds = hdr->sizeofcmds;
+	if (sizeofcmds > file->size)
+		return (1);
 	offset = sizeof(mach_hdr64_t);
 	file->sectsize = sizeof(sect64_t);
 	ncmds = hdr->ncmds;
 	while (ncmds--)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
-		if (ld->cmd == LC_SEGMENT_64)
-			addsection64(file, ((seg_cmd64_t *)ld));
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return ;
+			return (1);
+		if (ld->cmd == LC_SEGMENT_64)
+			addsection64(file, ((seg_cmd64_t *)ld));
 	}
+	return (0);
 }
 
-void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
+int		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 {
 	ld_cmd_t	*ld;
 	size_t		offset;
@@ -100,18 +109,21 @@ void	init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 	uint32_t	sizeofcmds;
 
 	sizeofcmds = hdr->sizeofcmds;
+	if (sizeofcmds > file->size)
+		return (1);
 	offset = sizeof(mach_hdr_t);
 	file->sectsize = sizeof(sect_t);
 	ncmds = hdr->ncmds;
 	while (ncmds--)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
-		if (ld->cmd == LC_SEGMENT)
-			addsection(file, ((seg_cmd_t *)ld));
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return ;
+			return (1);
+		if (ld->cmd == LC_SEGMENT)
+			addsection(file, ((seg_cmd_t *)ld));
 	}
+	return (0);
 }
 
 #endif

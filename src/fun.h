@@ -6,12 +6,14 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:57:32 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:57:48 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 16:32:42 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FUN_H
 # define FUN_H
+
+# include "type.h"
 
 # ifdef NM
 
@@ -36,7 +38,7 @@ void		dump(mhfile_t *file);
 
 void		addsection(msyms_t *file, seg_cmd_t *seg);
 void		addsection64(msyms_t *file, seg_cmd64_t *seg);
-void		init_machfile32(msyms_t *file, mach_hdr_t *hdr);
-void		init_machfile64(msyms_t *file, mach_hdr64_t *hdr);
+int			init_machfile32(msyms_t *file, mach_hdr_t *hdr);
+int			init_machfile64(msyms_t *file, mach_hdr64_t *hdr);
 
 #endif

@@ -6,24 +6,16 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:49:58 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:58:36 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 16:13:08 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NM_H
 # define NM_H
 
-# include <sys/stat.h>
-# include <mach-o/loader.h>
-# include <mach-o/nlist.h>
-# include <mach-o/ranlib.h>
-# include <mach/machine.h>
-# include <ar.h>
-# include <unistd.h>
-
 # include "swapbyte.h"
-# include "type.h"
 # include "typedef.h"
+# include "type.h"
 # include "fun.h"
 
 # define LETTERSYM "tdb"

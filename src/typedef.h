@@ -6,22 +6,30 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:58:03 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 22:49:06 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 16:16:32 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPEDEF_H
 # define TYPEDEF_H
 
+# include <sys/stat.h>
+# include <mach-o/loader.h>
+# include <mach-o/nlist.h>
+# include <mach-o/ranlib.h>
+# include <mach/machine.h>
+# include <ar.h>
+# include <unistd.h>
+
 # define TYPEDEF(x, y) typedef struct x y##_t
 
 # define STAT_T TYPEDEF(stat, stat)
 # define MACH_HDR_T TYPEDEF(mach_header, mach_hdr)
-# define MACH_HDR64_T TYPEDEF(mach_header64, mach_hdr64)
+# define MACH_HDR64_T TYPEDEF(mach_header_64, mach_hdr64)
 # define SEG_CMD_T TYPEDEF(segment_command, seg_cmd)
-# define SEG_CMD64_T TYPEDEF(segment_command64, seg_cmd64)
+# define SEG_CMD64_T TYPEDEF(segment_command_64, seg_cmd64)
 # define SECT_T TYPEDEF(section, sect)
-# define SECT64_T TYPEDEF(section64, sect64)
+# define SECT64_T TYPEDEF(section_64, sect64)
 # define LD_CMD_T TYPEDEF(load_command, ld_cmd)
 # define ST_CMD_T TYPEDEF(symtab_command, st_cmd)
 # define NLST64_T TYPEDEF(nlist_64, nlst64)
@@ -33,6 +41,7 @@
 # define MSUB_T TYPEDEF(s_mach_sub, msub)
 # define MSYMS_T TYPEDEF(s_mach_syms, msyms)
 # define MTEXT_T TYPEDEF(s_mach_text, mtext)
+# define SYM_T TYPEDEF(s_sym, sym)
 
 STAT_T;
 MACH_HDR_T;
@@ -52,6 +61,7 @@ AR_HDR_T;
 MHFILE_T;
 MSUB_T;
 MSYMS_T;
+SYM_T;
 # ifdef OTOOL
 
 MTEXT_T;

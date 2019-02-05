@@ -6,12 +6,16 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:55:14 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:59:12 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 16:10:48 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPE_H
 # define TYPE_H
+
+# include <stdint.h>
+# include <string.h>
+# include "typedef.h"
 
 # ifdef NM
 

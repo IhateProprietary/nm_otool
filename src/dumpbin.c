@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 20:52:54 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/08 18:26:22 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,6 @@ int		dumpbin(mhfile_t *mach, size_t size)
 }
 
 #endif
-
-#include <stdio.h>
 
 void	dump(mhfile_t *file)
 {

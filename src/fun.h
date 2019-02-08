@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:57:32 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 16:32:42 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 17:48:48 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void		dumptext(msyms_t *file, void *base, int is32);
 
 int			init_machheader(mhfile_t *file);
 int			init_machfile(int fd, mhfile_t *file);
-void		dumpbin(mhfile_t *mach, size_t size);
+int			dumpbin(mhfile_t *mach, size_t size);
 void		dump(mhfile_t *file);
 
 void		addsection(msyms_t *file, seg_cmd_t *seg);

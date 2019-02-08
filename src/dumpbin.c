@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 17:39:51 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 20:52:54 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ void	dumparch(mhfile_t *file)
 			break ;
 		file->objname = (char *)(hdr + 1);
 		file->base = (void *)((char *)(hdr + 1) + off);
-		dumpbin(file, size);
+		if (dumpbin(file, size))
+			break ;
 		hdr = (ar_hdr_t *)((char *)(hdr + 1) + size);
 	}
 }
@@ -89,12 +90,13 @@ void	dumparch(mhfile_t *file)
 			break ;
 		file->objname = (char *)(hdr + 1);
 		file->base = (void *)((char *)(hdr + 1) + off);
-		dumpbin(file, size);
+		if (dumpbin(file, size))
+			break ;
 		hdr = (ar_hdr_t *)((char *)(hdr + 1) + size);
 	}
 }
 
-void	dumpbin(mhfile_t *mach, size_t size)
+int		dumpbin(mhfile_t *mach, size_t size)
 {
 	msyms_t		file;
 	mach_hdr_t	*hdr;
@@ -122,10 +124,13 @@ void	dumpbin(mhfile_t *mach, size_t size)
 
 #endif
 
+#include <stdio.h>
+
 void	dump(mhfile_t *file)
 {
 	if (file->type == MF_ARCHIVE)
 		dumparch(file);
 	else if (file->type == MF_BINARY)
-		dumpbin(file, file->truesize);
+		if (dumpbin(file, file->truesize))
+			printf("hey");
 }

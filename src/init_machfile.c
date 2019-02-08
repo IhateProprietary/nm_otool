@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:46:21 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 16:40:54 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/08 18:23:17 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return (1);
+			break ;
 		if (ld->cmd == LC_SEGMENT_64)
 			addsection64(file, ((seg_cmd64_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
@@ -60,12 +60,12 @@ int		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 	offset = sizeof(mach_hdr_t);
 	file->sectsize = sizeof(sect_t);
 	ncmds = hdr->ncmds;
-	while (ncmds--)
+	while (--ncmds)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return (1);
+			break ;
 		if (ld->cmd == LC_SEGMENT)
 			addsection(file, ((seg_cmd_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
@@ -89,12 +89,12 @@ int		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 	offset = sizeof(mach_hdr64_t);
 	file->sectsize = sizeof(sect64_t);
 	ncmds = hdr->ncmds;
-	while (ncmds--)
+	while (--ncmds)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return (1);
+			break ;
 		if (ld->cmd == LC_SEGMENT_64)
 			addsection64(file, ((seg_cmd64_t *)ld));
 	}
@@ -114,12 +114,12 @@ int		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 	offset = sizeof(mach_hdr_t);
 	file->sectsize = sizeof(sect_t);
 	ncmds = hdr->ncmds;
-	while (ncmds--)
+	while (--ncmds)
 	{
 		ld = (ld_cmd_t *)((char *)hdr + offset);
 		offset += ld->cmdsize;
 		if (offset > sizeofcmds)
-			return (1);
+			break ;
 		if (ld->cmd == LC_SEGMENT)
 			addsection(file, ((seg_cmd_t *)ld));
 	}

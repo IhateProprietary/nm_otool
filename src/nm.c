@@ -6,15 +6,19 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:45:07 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 16:17:04 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/05 20:32:31 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <stdlib.h>
 #include "nm.h"
 #include "ft_printf.h"
+
+#include <unistd.h>
+#include <fcntl.h>
 
 int		main(int ac, char **av)
 {

@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
-/*   Updated: 2019/02/08 18:26:22 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 16:17:16 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int		dumpbin(mhfile_t *mach, size_t size)
 			ft_printf("\n%s(%s):\n", mach->name, mach->objname);
 		else if (mach->name)
 			ft_printf("%s:\n", mach->name);
-		dumpsym(&file);
+		dumpsym(&file, hdr->magic);
 	}
 	free(file.syms);
 	free(file.sect);
@@ -129,6 +129,5 @@ void	dump(mhfile_t *file)
 	if (file->type == MF_ARCHIVE)
 		dumparch(file);
 	else if (file->type == MF_BINARY)
-		if (dumpbin(file, file->truesize))
-			printf("hey");
+		dumpbin(file, file->truesize);
 }

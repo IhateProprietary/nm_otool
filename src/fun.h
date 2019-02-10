@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:57:32 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 17:48:48 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 16:18:43 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define FUN_H
 
 # include "type.h"
+# include <stdint.h>
 
 # ifdef NM
 
@@ -21,8 +22,7 @@ void		ft_qsort(void **stack, ssize_t size, int (*cmp)());
 
 void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base);
 void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base);
-void		printsym(sym_t *sym, sect64_t *sect);
-void		dumpsym(msyms_t *file);
+void		dumpsym(msyms_t *file, uint32_t magic);
 
 # endif
 # ifdef OTOOL

@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:45:41 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:45:56 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 16:23:05 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "ft_printf.h"
 # include "libft.h"
 
-void	printsym(sym_t *sym, sect64_t *sect)
+void	printsym(sym_t *sym, sect64_t *sect, int pad)
 {
 	uint8_t		ntype;
 	char		*name;
@@ -28,23 +28,23 @@ void	printsym(sym_t *sym, sect64_t *sect)
 	if (name[0] == 0)
 		return ;
 	if ((ntype & N_TYPE) == N_UNDF)
-		ft_printf("%16s %c %s\n", "", 'U', name);
+		ft_printf("%*s %c %s\n", pad, "", 'U', name);
 	else if ((ntype & N_TYPE) == N_ABS)
-		ft_printf("%16s %c %s\n", "", 'A', name);
+		ft_printf("%*s %c %s\n", pad, "", 'A', name);
 	else if ((ntype & N_TYPE) == N_SECT)
 	{
 		c = sect ? ft_strchr(LETTERSYM, sect->sectname[2]) : 0;
-		ft_printf("%016llx %c %s\n", sym->n_value,
+		ft_printf("%0*llx %c %s\n", pad, sym->n_value,
 			(c ? *c : 's') - 0x20 * (ntype & N_EXT),
 			name);
 	}
 	else if ((ntype & N_TYPE) == N_INDR)
-		ft_printf("%16s %c %s\n", "", 'I', name);
+		ft_printf("%*s %c %s\n", pad, "", 'I', name);
 	else if ((ntype & N_TYPE) == N_UNDF && ntype & N_EXT && sym->n_value != 0)
-		ft_printf("%16s %c %s\n", "", 'C', name);
+		ft_printf("%*s %c %s\n", pad, "", 'C', name);
 }
 
-void	dumpsym(msyms_t *file)
+void	dumpsym(msyms_t *file, uint32_t magic)
 {
 	size_t	nsyms;
 	size_t	i;
@@ -61,9 +61,10 @@ void	dumpsym(msyms_t *file)
 	while (i < nsyms)
 	{
 		sym = file->syms[i++];
-		if (sym->n_sect < file->nsects)
+		if (sym->n_sect <= file->nsects)
 			printsym(sym, sym->n_sect != NO_SECT ?
-				file->sect + ((sym->n_sect - 1) * file->sectsize) : 0);
+				file->sect + ((sym->n_sect - 1) * file->sectsize) : 0,
+				magic == MH_MAGIC_64 ? 16 : 8);
 	}
 }
 

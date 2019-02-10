@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:00 by jye               #+#    #+#             */
-/*   Updated: 2019/02/01 21:47:48 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 17:00:52 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,17 @@
 #include <mach-o/ranlib.h>
 #include "nm.h"
 #include "libft.h"
+
+void	copy_imginfo(mhfile_t *file, farch_t *fat, int swap)
+{
+	uint32_t value;
+
+	value = fat->offset;
+	value = swap ? SWAP32(value) : value;
+	file->base = file->map + value;
+	file->truesize = fat->size;
+	file->top = file->base + fat->size;
+}
 
 void	init_machfromfat(mhfile_t *file, int swap)
 {
@@ -35,12 +46,9 @@ void	init_machfromfat(mhfile_t *file, int swap)
 		value = swap ? SWAP32(value) : value;
 		if (value == CPUARCH64 || value == CPUARCH32)
 		{
-			value = fat->offset;
-			value = swap ? SWAP32(value) : value;
-			file->base = file->map + value;
-			file->truesize = fat->size;
-			file->top = file->base + fat->size;
-			break ;
+			copy_imginfo(file, fat, swap);
+			if (value == CPUARCH64)
+				break ;
 		}
 		fat++;
 	}

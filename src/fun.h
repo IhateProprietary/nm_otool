@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:57:32 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:18:43 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 16:46:03 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void		ft_qsort(void **stack, ssize_t size, int (*cmp)());
 
 void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base);
 void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base);
-void		dumpsym(msyms_t *file, uint32_t magic);
+void		dumpsym(msyms_t *file, uint32_t magic, void *top);
 
 # endif
 # ifdef OTOOL

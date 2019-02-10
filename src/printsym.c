@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:45:41 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:23:05 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 17:17:27 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	printsym(sym_t *sym, sect64_t *sect, int pad)
 	if ((ntype & N_TYPE) == N_UNDF)
 		ft_printf("%*s %c %s\n", pad, "", 'U', name);
 	else if ((ntype & N_TYPE) == N_ABS)
-		ft_printf("%*s %c %s\n", pad, "", 'A', name);
+		ft_printf("%0*llx %c %s\n", pad, sym->n_value, 'A', name);
 	else if ((ntype & N_TYPE) == N_SECT)
 	{
 		c = sect ? ft_strchr(LETTERSYM, sect->sectname[2]) : 0;
@@ -39,12 +39,12 @@ void	printsym(sym_t *sym, sect64_t *sect, int pad)
 			name);
 	}
 	else if ((ntype & N_TYPE) == N_INDR)
-		ft_printf("%*s %c %s\n", pad, "", 'I', name);
+		ft_printf("%0*llx %c %s\n", pad, sym->n_value, 'I', name);
 	else if ((ntype & N_TYPE) == N_UNDF && ntype & N_EXT && sym->n_value != 0)
 		ft_printf("%*s %c %s\n", pad, "", 'C', name);
 }
 
-void	dumpsym(msyms_t *file, uint32_t magic)
+void	dumpsym(msyms_t *file, uint32_t magic, void *top)
 {
 	size_t	nsyms;
 	size_t	i;
@@ -61,7 +61,8 @@ void	dumpsym(msyms_t *file, uint32_t magic)
 	while (i < nsyms)
 	{
 		sym = file->syms[i++];
-		if (sym->n_sect <= file->nsects)
+		if ((sym->n_sect <= file->nsects || sym->idx < (char *)top)
+			&& !(sym->n_type & N_STAB))
 			printsym(sym, sym->n_sect != NO_SECT ?
 				file->sect + ((sym->n_sect - 1) * file->sectsize) : 0,
 				magic == MH_MAGIC_64 ? 16 : 8);

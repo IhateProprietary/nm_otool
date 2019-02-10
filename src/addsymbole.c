@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:48:13 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:37:05 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/10 16:50:33 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base)
 	sym = (sym_t *)(syms + nsyms);
 	stroff = base + cmd->stroff;
 	file->stroff = stroff;
-	while (nsyms--)
+	while (nsyms-- && psym <= (nlst64_t *)((char *)base + file->size))
 	{
 		copy_value64(sym, psym++, stroff);
 		*syms++ = sym++;
@@ -89,7 +89,7 @@ void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base)
 	sym = (sym_t *)(syms + nsyms);
 	stroff = base + cmd->stroff;
 	file->stroff = stroff;
-	while (nsyms--)
+	while (nsyms-- && psym <= (nlst_t *)((char *)base + file->size))
 	{
 		copy_value(sym, psym++, stroff);
 		*syms++ = sym++;

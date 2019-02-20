@@ -6,12 +6,12 @@
 #    By: jye <marvin@42.fr>                         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/01 17:45:46 by jye               #+#    #+#              #
-#    Updated: 2019/02/10 16:18:58 by jye              ###   ########.fr        #
+#    Updated: 2019/02/20 17:01:50 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 CC = gcc
-CFLAGS = -Wall -Wextra #-Werror
+CFLAGS = -Wall -Wextra -g3
 
 SRCS = addsection addsymbole dumpbin dumptext ft_qsort init_machfile \
 	   init_machheader nm printsym

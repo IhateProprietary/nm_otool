@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:48:13 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:50:33 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/20 17:41:21 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,36 @@ static int	cmp_ascii(void *sym1, void *sym2)
 	return (ret);
 }
 
-static void	copy_value64(sym_t *sym, nlst64_t *psym, char *stroff)
+static void	copy_value64(sym_t *sym, nlst64_t *psym, char *stroff, void *top)
 {
-	sym->idx = stroff + psym->n_un.n_strx;
+	char *val;
+
+	val = stroff + psym->n_un.n_strx;
+	if (val < (char *)top)
+		sym->idx = val;
+	else
+		sym->idx = stroff + 1;
 	sym->n_value = psym->n_value;
 	sym->n_type = psym->n_type;
 	sym->n_sect = psym->n_sect;
 }
 
-static void	copy_value(sym_t *sym, nlst_t *psym, char *stroff)
+static void	copy_value(sym_t *sym, nlst_t *psym, char *stroff, void *top)
 {
-	sym->idx = stroff + psym->n_un.n_strx;
+	char *val;
+
+	val = stroff + psym->n_un.n_strx;
+	if (val < (char *)top)
+		sym->idx = val;
+	else
+		sym->idx = stroff + 1;
+	sym->idx = val;
 	sym->n_value = psym->n_value;
 	sym->n_type = psym->n_type;
 	sym->n_sect = psym->n_sect;
 }
 
-void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base)
+void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base, void *top)
 {
 	nlst64_t	*psym;
 	sym_t		**syms;
@@ -51,7 +64,8 @@ void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base)
 
 	nsyms = cmd->nsyms;
 	if ((psym = (nlst64_t *)((char *)base + cmd->symoff)) >=
-		(nlst64_t *)((char *)base + file->size))
+		(nlst64_t *)((char *)base + file->size) || ((cmd->nsyms *
+		sizeof(nlst64_t) + base + cmd->symoff) > (top - cmd->strsize)))
 		return ;
 	syms = malloc(nsyms * sizeof(*syms) + nsyms * sizeof(**syms));
 	if (syms == (sym_t **)0)
@@ -63,13 +77,13 @@ void		addsymbole64(msyms_t *file, st_cmd_t *cmd, void *base)
 	file->stroff = stroff;
 	while (nsyms-- && psym <= (nlst64_t *)((char *)base + file->size))
 	{
-		copy_value64(sym, psym++, stroff);
+		copy_value64(sym, psym++, stroff, top);
 		*syms++ = sym++;
 	}
 	ft_qsort((void **)file->syms, file->nsyms, cmp_ascii);
 }
 
-void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base)
+void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base, void *top)
 {
 	nlst_t	*psym;
 	sym_t	**syms;
@@ -79,7 +93,8 @@ void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base)
 
 	nsyms = cmd->nsyms;
 	if ((psym = (nlst_t *)((char *)base + cmd->symoff)) >=
-		(nlst_t *)((char *)base + file->size))
+		(nlst_t *)((char *)base + file->size) || ((cmd->nsyms *
+		sizeof(nlst_t) + base + cmd->symoff) > (top - cmd->strsize)))
 		return ;
 	syms = malloc(nsyms * sizeof(*syms) + nsyms * sizeof(**syms));
 	if (syms == (sym_t **)0)
@@ -91,7 +106,7 @@ void		addsymbole(msyms_t *file, st_cmd_t *cmd, void *base)
 	file->stroff = stroff;
 	while (nsyms-- && psym <= (nlst_t *)((char *)base + file->size))
 	{
-		copy_value(sym, psym++, stroff);
+		copy_value(sym, psym++, stroff, top);
 		*syms++ = sym++;
 	}
 	ft_qsort((void **)file->syms, file->nsyms, cmp_ascii);

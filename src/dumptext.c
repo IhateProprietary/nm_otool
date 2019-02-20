@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:48:43 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:20:52 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/20 17:53:33 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	init_textforsection64(msyms_t *file, void *base,
 void	dumptext(msyms_t *file, void *base, int is32)
 {
 	mtext_t	text;
+	void	*top;
 	size_t	i;
 	int		pad;
 	char	b[50];
@@ -96,7 +97,8 @@ void	dumptext(msyms_t *file, void *base, int is32)
 	ft_printf("Contents of (%s,%s) section\n", text.segname, text.sectname);
 	i = 0;
 	pad = 8 + 8 * !is32;
-	while (i < text.size)
+	top = base + file->size;
+	while (i < text.size && (text.ptr + i) < top)
 	{
 		xtoa_b(b, (uint8_t *)text.ptr + i,
 			(text.size - i) < 0x10 ? text.size - i : 0x10);

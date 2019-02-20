@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:46:21 by jye               #+#    #+#             */
-/*   Updated: 2019/02/08 18:23:17 by jye              ###   ########.fr       */
+/*   Updated: 2019/02/20 17:18:22 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int		init_machfile64(msyms_t *file, mach_hdr64_t *hdr)
 		if (ld->cmd == LC_SEGMENT_64)
 			addsection64(file, ((seg_cmd64_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
-			addsymbole64(file, (st_cmd_t *)ld, (void *)hdr);
+			addsymbole64(file, (st_cmd_t *)ld,
+					(void *)hdr, file->size + (char *)hdr);
 	}
 	return (0);
 }
@@ -69,7 +70,8 @@ int		init_machfile32(msyms_t *file, mach_hdr_t *hdr)
 		if (ld->cmd == LC_SEGMENT)
 			addsection(file, ((seg_cmd_t *)ld));
 		else if (ld->cmd == LC_SYMTAB)
-			addsymbole(file, (st_cmd_t *)ld, (void *)hdr);
+			addsymbole(file, (st_cmd_t *)ld,
+					(void *)hdr, file->size + (char *)hdr);
 	}
 	return (0);
 }

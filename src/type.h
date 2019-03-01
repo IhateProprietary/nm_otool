@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:55:14 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 16:10:48 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/01 20:14:50 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 struct	s_sym
 {
 	char		*idx;
+	size_t		max;
 	uint64_t	n_value;
 	uint32_t	n_type;
 	uint32_t	n_sect;
@@ -31,30 +32,40 @@ struct	s_sym
 
 struct	s_mach_file
 {
-	char	*name;
-	char	*objname;
-	void	*map;
-	size_t	mapsize;
-	size_t	truesize;
-	void	*base;
-	void	*top;
-	int		type;
+	char		*name;
+	char		*objname;
+	char		*archname;
+	void		*map;
+	size_t		mapsize;
+	size_t		truesize;
+	void		*base;
+	void		*top;
+	void		*truetop;
+	uint32_t	arch;
+	int			type;
 };
 
 struct	s_mach_syms
 {
-	void	*stroff;
-	size_t	sectsize;
-	void	*sect;
-	size_t	nsects;
+	void		*stroff;
+	size_t		sectsize;
+	void		*sect;
+	size_t		nsects;
+	void		*base;
+	void		*top;
+# ifdef OTOOL
+
+	void		(*xtob)();
+
+# endif
 # ifdef NM
 
-	sym_t	**syms;
-	size_t	nsyms;
+	sym_t		**syms;
+	size_t		nsyms;
 
 # endif
 
-	size_t	size;
+	size_t		size;
 };
 
 # ifdef OTOOL

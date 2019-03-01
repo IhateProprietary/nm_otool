@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:45:41 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 17:17:27 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/01 20:13:47 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,23 +28,23 @@ void	printsym(sym_t *sym, sect64_t *sect, int pad)
 	if (name[0] == 0)
 		return ;
 	if ((ntype & N_TYPE) == N_UNDF)
-		ft_printf("%*s %c %s\n", pad, "", 'U', name);
+		ft_printf("%*s %c %.*s\n", pad, "", 'U', sym->max, name);
 	else if ((ntype & N_TYPE) == N_ABS)
-		ft_printf("%0*llx %c %s\n", pad, sym->n_value, 'A', name);
+		ft_printf("%0*llx %c %.*s\n", pad, sym->n_value, 'A', sym->max, name);
 	else if ((ntype & N_TYPE) == N_SECT)
 	{
 		c = sect ? ft_strchr(LETTERSYM, sect->sectname[2]) : 0;
-		ft_printf("%0*llx %c %s\n", pad, sym->n_value,
+		ft_printf("%0*llx %c %.*s\n", pad, sym->n_value,
 			(c ? *c : 's') - 0x20 * (ntype & N_EXT),
-			name);
+			sym->max, name);
 	}
 	else if ((ntype & N_TYPE) == N_INDR)
-		ft_printf("%0*llx %c %s\n", pad, sym->n_value, 'I', name);
+		ft_printf("%0*llx %c %.*s\n", pad, sym->n_value, 'I', sym->max, name);
 	else if ((ntype & N_TYPE) == N_UNDF && ntype & N_EXT && sym->n_value != 0)
-		ft_printf("%*s %c %s\n", pad, "", 'C', name);
+		ft_printf("%*s %c %.*s\n", pad, "", 'C', sym->max, name);
 }
 
-void	dumpsym(msyms_t *file, uint32_t magic, void *top)
+void	dumpsym(msyms_t *file, int is32)
 {
 	size_t	nsyms;
 	size_t	i;
@@ -61,11 +61,15 @@ void	dumpsym(msyms_t *file, uint32_t magic, void *top)
 	while (i < nsyms)
 	{
 		sym = file->syms[i++];
-		if ((sym->n_sect <= file->nsects || sym->idx < (char *)top)
+		if ((sym->n_sect <= file->nsects || sym->idx < (char *)file->top)
 			&& !(sym->n_type & N_STAB))
-			printsym(sym, sym->n_sect != NO_SECT ?
-				file->sect + ((sym->n_sect - 1) * file->sectsize) : 0,
-				magic == MH_MAGIC_64 ? 16 : 8);
+		{
+			if (sym->n_sect && file->sect)
+				printsym(sym, file->sect + (sym->n_sect - 1) * file->sectsize
+					, is32 ? 8 : 16);
+			else
+				printsym(sym, 0, is32 ? 8 : 16);
+		}
 	}
 }
 

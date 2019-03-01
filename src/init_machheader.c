@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:00 by jye               #+#    #+#             */
-/*   Updated: 2019/02/20 17:06:11 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/01 20:09:19 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,37 +18,40 @@
 #include "nm.h"
 #include "libft.h"
 
-void	copy_imginfo(mhfile_t *file, farch_t *fat, int swap)
+void	copy_imginfo(mhfile_t *file, farch_t *fat, int s)
 {
-	uint32_t value;
+	uint32_t	value;
+	char		*val;
 
-	value = fat->offset;
-	value = swap ? SWAP32(value) : value;
-	file->base = file->map + value;
-	file->truesize = fat->size;
-	file->top = file->base + fat->size;
+	val = (char *)(uint64_t)swap(fat->offset, s);
+	file->arch = swap(fat->cputype, s);
+	val += (uint64_t)file->map;
+	if (val < (char *)file->truetop - 0x400)
+		file->base = val;
+	value = swap(fat->size, s);
+	if (value < file->mapsize)
+		file->truesize = value;
+	val = file->base + swap(fat->size, s);
+	file->top = val > (char *)file->truetop ? file->truetop : val;
 }
 
-void	init_machfromfat(mhfile_t *file, int swap)
+void	init_machfromfat(mhfile_t *file, int s)
 {
 	uint32_t	nfat;
 	uint32_t	value;
 	farch_t		*fat;
 
-	value = ((struct fat_header *)file->map)->nfat_arch;
-	nfat = swap ? SWAP32(value) : value;
+	nfat = swap(((struct fat_header *)file->map)->nfat_arch, s);
 	if ((nfat * sizeof(farch_t)) > 0x1000)
 		return ;
 	fat = file->map + sizeof(struct fat_header);
 	while (nfat--)
 	{
-		value = fat->cputype;
-		value = swap ? SWAP32(value) : value;
-		if (value == CPUARCH64 || value == CPUARCH32)
+		value = swap(fat->cputype, s);
+		if (value == CPUARCH64)
 		{
-			copy_imginfo(file, fat, swap);
-			if (value == CPUARCH64)
-				break ;
+			copy_imginfo(file, fat, s);
+			break ;
 		}
 		fat++;
 	}
@@ -91,11 +94,13 @@ int		init_machheader(mhfile_t *file)
 	file->truesize = file->mapsize;
 	if (magic == FAT_CIGAM || magic == FAT_MAGIC)
 		init_machfromfat(file, magic == FAT_CIGAM);
-	if (file->base > (file->mapsize + file->map - 0x500))
+	if (file->base > (file->mapsize + file->map - 0x300))
 		return (1);
 	magic = *((uint32_t *)file->base);
 	if (magic == MH_MAGIC || magic == MH_MAGIC_64)
 		file->type = MF_BINARY;
+	else if (magic == FAT_CIGAM || magic == FAT_MAGIC)
+		file->type = MF_FAT;
 	else if (ft_memcmp(file->base, ARMAG, SARMAG) == 0)
 		init_machfromarch(file);
 	return (!file->type);

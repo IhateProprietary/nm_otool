@@ -6,11 +6,12 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
-/*   Updated: 2019/02/10 16:45:45 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/01 19:53:57 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <mach-o/loader.h>
+#include <mach-o/fat.h>
 #include <stdlib.h>
 #include "nm.h"
 #include "libft.h"
@@ -48,21 +49,22 @@ int		dumpbin(mhfile_t *mach, size_t size)
 	mach_hdr_t	*hdr;
 	int			ret;
 
-	ft_memset(&file, 0, sizeof(file));
-	file.size = size;
 	hdr = mach->base;
+	init_msyms(&file, mach, size);
 	ret = 1;
-	if (hdr->magic == MH_MAGIC_64)
-		ret = init_machfile64(&file, (mach_hdr64_t *)hdr);
-	else if (hdr->magic == MH_MAGIC)
-		ret = init_machfile32(&file, hdr);
+	if (hdr->magic == MH_MAGIC_64 || hdr->magic == MH_CIGAM_64)
+		ret = init_machfile64(&file, hdr->magic == MH_CIGAM_64);
+	else if (hdr->magic == MH_MAGIC || hdr->magic == MH_CIGAM)
+		ret = init_machfile32(&file, hdr->magic == MH_CIGAM);
 	if (!ret)
 	{
 		if (mach->name && mach->objname)
 			ft_printf("\n%s(%s):\n", mach->name, mach->objname);
+		else if (mach->name && mach->archname)
+			ft_printf("%s(for architecture %s):\n", mach->name, mach->archname);
 		else if (mach->name)
 			ft_printf("%s:\n", mach->name);
-		dumpsym(&file, hdr->magic, mach->top);
+		dumpsym(&file, hdr->magic == MH_MAGIC || hdr->magic == MH_CIGAM);
 	}
 	free(file.syms);
 	free(file.sect);
@@ -102,21 +104,23 @@ int		dumpbin(mhfile_t *mach, size_t size)
 	mach_hdr_t	*hdr;
 	int			ret;
 
-	ft_memset(&file, 0, sizeof(file));
-	file.size = size;
 	hdr = mach->base;
+	init_msyms(&file, mach, hdr, size);
 	ret = 1;
-	if (hdr->magic == MH_MAGIC_64)
-		ret = init_machfile64(&file, (mach_hdr64_t *)hdr);
-	else if (hdr->magic == MH_MAGIC)
-		ret = init_machfile32(&file, hdr);
+	if (hdr->magic == MH_MAGIC_64 || hdr->magic == MH_CIGAM_64)
+		ret = init_machfile64(&file, hdr->magic == MH_CIGAM_64);
+	else if (hdr->magic == MH_MAGIC || hdr->magic == MH_CIGAM)
+		ret = init_machfile32(&file, hdr->magic == MH_CIGAM);
 	if (!ret)
 	{
 		if (mach->name && mach->objname)
 			ft_printf("\n%s(%s):\n", mach->name, mach->objname);
+		else if (mach->name && mach->archname)
+			ft_printf("%s(for architecture %s):\n", mach->name, mach->archname);
 		else if (mach->name)
 			ft_printf("%s:\n", mach->name);
-		dumptext(&file, mach->base, hdr->magic == MH_MAGIC);
+		dumptext(&file, hdr->magic == MH_MAGIC || hdr->magic == MH_CIGAM,
+				 hdr->magic == MH_CIGAM_64 || hdr->magic == MH_CIGAM);
 	}
 	free(file.sect);
 	return (ret);
@@ -130,4 +134,6 @@ void	dump(mhfile_t *file)
 		dumparch(file);
 	else if (file->type == MF_BINARY)
 		dumpbin(file, file->truesize);
+	else if (file->type == MF_FAT)
+		dumpfat(file, *((uint32_t *)file->base) == FAT_CIGAM);
 }

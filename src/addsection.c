@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 18:57:10 by jye               #+#    #+#             */
-/*   Updated: 2019/02/05 16:40:18 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/01 20:31:39 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 #include "nm.h"
 #include "libft.h"
 
-void		addsection64(msyms_t *file, seg_cmd64_t *seg)
+void		addsection64(msyms_t *file, seg_cmd64_t *seg, int s)
 {
 	void	*mem;
 	size_t	sectsize;
 	size_t	offset;
 	void	*sect;
 
-	if ((seg->cmdsize - sizeof(seg_cmd64_t)) != seg->nsects * sizeof(sect64_t))
+	sectsize = swap(seg->nsects, s) * sizeof(sect64_t);
+	if ((swap(seg->cmdsize, s) - sizeof(seg_cmd64_t)) != sectsize)
 		return ;
-	sectsize = seg->nsects * sizeof(sect64_t);
 	offset = file->nsects * sizeof(sect64_t);
 	sect = (void *)(seg + 1);
 	if ((mem = malloc(sectsize + offset)) == (void *)0)
@@ -33,20 +33,20 @@ void		addsection64(msyms_t *file, seg_cmd64_t *seg)
 		ft_memcpy(mem, file->sect, offset);
 	free(file->sect);
 	ft_memcpy(mem + offset, sect, sectsize);
-	file->nsects += seg->nsects;
+	file->nsects += swap(seg->nsects, s);
 	file->sect = mem;
 }
 
-void		addsection(msyms_t *file, seg_cmd_t *seg)
+void		addsection(msyms_t *file, seg_cmd_t *seg, int s)
 {
 	void	*mem;
 	size_t	sectsize;
 	size_t	offset;
 	void	*sect;
 
-	if ((seg->cmdsize - sizeof(seg_cmd_t)) != seg->nsects * sizeof(sect_t))
+	sectsize = swap(seg->nsects, s) * sizeof(sect_t);
+	if ((swap(seg->cmdsize, s) - sizeof(seg_cmd_t)) != sectsize)
 		return ;
-	sectsize = seg->nsects * sizeof(sect_t);
 	offset = file->nsects * sizeof(sect_t);
 	sect = (void *)(seg + 1);
 	if ((mem = malloc(sectsize + offset)) == (void *)0)
@@ -55,6 +55,6 @@ void		addsection(msyms_t *file, seg_cmd_t *seg)
 		ft_memcpy(mem, file->sect, offset);
 	free(file->sect);
 	ft_memcpy(mem + offset, sect, sectsize);
-	file->nsects += seg->nsects;
+	file->nsects += swap(seg->nsects, s);
 	file->sect = mem;
 }

@@ -6,7 +6,7 @@
 #    By: jye <marvin@42.fr>                         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/01 17:45:46 by jye               #+#    #+#              #
-#    Updated: 2019/02/20 17:01:50 by jye              ###   ########.fr        #
+#    Updated: 2019/03/01 16:43:24 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -14,7 +14,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g3
 
 SRCS = addsection addsymbole dumpbin dumptext ft_qsort init_machfile \
-	   init_machheader nm printsym
+	   init_machheader nm printsym dumpfat init_msyms
 
 ONAME_1 = $(addsuffix .nm.o, $(SRCS))
 ONAME_2 = $(addsuffix .ot.o, $(SRCS))

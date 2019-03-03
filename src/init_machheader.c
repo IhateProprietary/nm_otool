@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:00 by jye               #+#    #+#             */
-/*   Updated: 2019/03/01 20:09:19 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/02 17:40:56 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int		init_machheader(mhfile_t *file)
 	file->truesize = file->mapsize;
 	if (magic == FAT_CIGAM || magic == FAT_MAGIC)
 		init_machfromfat(file, magic == FAT_CIGAM);
-	if (file->base > (file->mapsize + file->map - 0x300))
+	if (file->base > (file->mapsize + file->map))
 		return (1);
 	magic = *((uint32_t *)file->base);
 	if (magic == MH_MAGIC || magic == MH_MAGIC_64)

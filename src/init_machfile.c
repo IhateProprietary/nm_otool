@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:46:21 by jye               #+#    #+#             */
-/*   Updated: 2019/03/01 19:41:42 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/03 15:45:32 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ int		init_machfile64(msyms_t *file, int s)
 	uint32_t	ncmds;
 	uint32_t	sizeofcmds;
 
-	sizeofcmds = swap(((mach_hdr64_t *)file->base)->sizeofcmds, s);
+	sizeofcmds = swap(((mach_hdr64_t *)file->base)->sizeofcmds, s)
+		+ sizeof(mach_hdr64_t);
 	if (sizeofcmds > file->size)
 		return (1);
 	offset = sizeof(mach_hdr64_t);
@@ -54,7 +55,8 @@ int		init_machfile32(msyms_t *file, int s)
 	uint32_t	ncmds;
 	uint32_t	sizeofcmds;
 
-	sizeofcmds = swap(((mach_hdr_t *)file->base)->sizeofcmds, s);
+	sizeofcmds = swap(((mach_hdr_t *)file->base)->sizeofcmds, s)
+		+ sizeof(mach_hdr_t);
 	if (sizeofcmds > file->size)
 		return (1);
 	offset = sizeof(mach_hdr_t);
@@ -83,7 +85,8 @@ int		init_machfile64(msyms_t *file, int s)
 	uint32_t	ncmds;
 	uint32_t	sizeofcmds;
 
-	sizeofcmds = swap(((mach_hdr64_t *)file->base)->sizeofcmds, s);
+	sizeofcmds = swap(((mach_hdr64_t *)file->base)->sizeofcmds, s)
+		+ sizeof(mach_hdr64_t);
 	if (sizeofcmds > file->size)
 		return (1);
 	offset = sizeof(mach_hdr64_t);
@@ -108,7 +111,8 @@ int		init_machfile32(msyms_t *file, int s)
 	uint32_t	ncmds;
 	uint32_t	sizeofcmds;
 
-	sizeofcmds = swap(((mach_hdr_t *)file->base)->sizeofcmds, s);
+	sizeofcmds = swap(((mach_hdr_t *)file->base)->sizeofcmds, s)
+		+ sizeof(mach_hdr_t);
 	if (sizeofcmds > file->size)
 		return (1);
 	offset = sizeof(mach_hdr_t);

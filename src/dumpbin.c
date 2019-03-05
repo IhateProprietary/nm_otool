@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:47:57 by jye               #+#    #+#             */
-/*   Updated: 2019/03/01 19:53:57 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/03 19:09:23 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int		dumpbin(mhfile_t *mach, size_t size)
 		else if (mach->name)
 			ft_printf("%s:\n", mach->name);
 		dumptext(&file, hdr->magic == MH_MAGIC || hdr->magic == MH_CIGAM,
-				 hdr->magic == MH_CIGAM_64 || hdr->magic == MH_CIGAM);
+			hdr->magic == MH_CIGAM_64 || hdr->magic == MH_CIGAM);
 	}
 	free(file.sect);
 	return (ret);

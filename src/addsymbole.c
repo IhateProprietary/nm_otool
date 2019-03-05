@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 21:48:13 by jye               #+#    #+#             */
-/*   Updated: 2019/03/01 20:23:53 by jye              ###   ########.fr       */
+/*   Updated: 2019/03/03 19:08:45 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	cmp_ascii(void *sym1, void *sym2)
 
 	max1 = ((sym_t *)sym1)->max;
 	max2 = ((sym_t *)sym2)->max;
-	n =  max1 < max2 ? max1 : max2;
+	n = max1 < max2 ? max1 : max2;
 	ret = ft_strncmp(((sym_t *)sym1)->idx, ((sym_t *)sym2)->idx, n);
 	if (ret == 0)
 		ret = ((sym_t *)sym1)->n_value - ((sym_t *)sym2)->n_value;
